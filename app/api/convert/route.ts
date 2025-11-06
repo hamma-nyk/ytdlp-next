@@ -56,11 +56,12 @@ export async function GET(req: NextRequest) {
 
     const hasAudio = info.acodec && info.acodec !== "none";
     const hasVideo = info.vcodec && info.vcodec !== "none";
-    const audioOnly = hasAudio && !hasVideo;
 
     if (!hasAudio && hasVideo) {
       return new Response("only video, no audio", { status: 400 });
     }
+
+    const audioOnly = hasAudio && !hasVideo;
 
     const mainUrl =
       info.url ||
@@ -135,7 +136,7 @@ export async function GET(req: NextRequest) {
       return Response.json({
         success: true,
         title: info.title || "video",
-        url: "/" + path.basename(outputFile),
+        url: "/tmp/" + path.basename(outputFile),
       });
     } catch (error) {
       return new Response(
