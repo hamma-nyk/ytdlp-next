@@ -1,27 +1,13 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "app/api/info.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
+    { "src": "app/api/**/*.ts", "use": "@vercel/node" },
+    { "src": "app/api/**/*.py", "use": "@vercel/python" },
+    { "src": "next.config.js", "use": "@vercel/next" }
   ],
   "routes": [
-    {
-      "src": "/api/info",
-      "dest": "/app/api/info.py"
-    },
-    {
-      "src": "/api/convert(.*)",
-      "dest": "/app/api/convert/route.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
+    { "src": "/api/info", "dest": "/app/api/info.py" },
+    { "src": "/api/(.*)", "dest": "/app/api/$1" },
+    { "src": "/(.*)", "dest": "/" }
   ]
 }

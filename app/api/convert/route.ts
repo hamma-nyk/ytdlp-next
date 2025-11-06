@@ -5,8 +5,7 @@ import queryString from "query-string";
 import fetch from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
-import pathToFfmpeg from "ffmpeg-static";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import ffmpegPath from "ffmpeg-static";
 
 export const runtime = "nodejs"; // Penting: agar pakai Node.js runtime, bukan Edge
 
@@ -110,7 +109,8 @@ export async function GET(req: NextRequest) {
     //   projectRoot,
     //   "node_modules/ffmpeg-static/ffmpeg.exe"
     // );
-    const ffmpegPath = "node_modules\\ffmpeg-static\\ffmpeg.exe";
+    if (!ffmpegPath) return new Response("FFmpeg not found", { status: 500 });
+
     try {
       const ff = execa(ffmpegPath, ffmpegArgs, {
         stdout: "pipe",
