@@ -127,7 +127,10 @@ export async function GET(req: NextRequest) {
         url: "/" + path.basename(outputFile),
       });
     } catch (error) {
-      return new Response("FFmpeg processing failed", { status: 500 });
+      return new Response(
+        error instanceof Error ? error.message : JSON.stringify(error, null, 2),
+        { status: 500 }
+      );
     }
   } catch (error) {
     const message =
