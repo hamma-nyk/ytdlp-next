@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { spawn } from "child_process";
 import { execa } from "execa";
 import path from "path";
 import queryString from "query-string";
@@ -111,12 +112,15 @@ export async function GET(req: NextRequest) {
 
     const ffmpegPath = ".\\node_modules\\ffmpeg-static\\ffmpeg";
     try {
-      const ff = execa(ffmpegPath, ffmpegArgs, {
-        stdout: "pipe",
-        stderr: "pipe",
-        // shell: false,
-        // windowsHide: true,
+      const ff = spawn("./node_modules/ffmpeg-static/ffmpeg", ffmpegArgs, {
+        stdio: "pipe",
       });
+      //   const ff = execa(ffmpegPath, ffmpegArgs, {
+      //     stdout: "pipe",
+      //     stderr: "pipe",
+      //     // shell: false,
+      //     // windowsHide: true,
+      //   });
       await ff;
 
       if (!fs.existsSync(outputFile)) {
