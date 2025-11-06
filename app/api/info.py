@@ -29,8 +29,10 @@ async def get_info(url: str, format: str):
     
     if format == "audio":
         yt_dlp_formats = "bestaudio/best"
+        print(yt_dlp_formats)
     elif format == "video":
         yt_dlp_formats = "bestvideo+bestaudio/best"
+        print(yt_dlp_formats)
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid format")
     try:
