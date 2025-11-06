@@ -6,7 +6,9 @@ import queryString from "query-string";
 import fetch from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const ffmpegInstaller = require("@ffmpeg-installer/ffmpeg");
 
 export const runtime = "nodejs"; // Penting: agar pakai Node.js runtime, bukan Edge
 
