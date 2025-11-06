@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
     //   "node_modules/ffmpeg-static/ffmpeg.exe"
     // );
 
-    const ffmpegPath = ".\\node_modules\\ffmpeg-static\\ffmpeg";
+    // const ffmpegPath = ".\\node_modules\\ffmpeg-static\\ffmpeg";
     try {
       const ff = spawn("./node_modules/ffmpeg-static/ffmpeg", ffmpegArgs, {
         stdio: "pipe",
@@ -121,7 +121,12 @@ export async function GET(req: NextRequest) {
       //     // shell: false,
       //     // windowsHide: true,
       //   });
-      await ff;
+      await new Promise<void>((resolve, reject) => {
+        ff.on("close", (code) => {
+          if (code === 0) resolve();
+          else reject(new Error(`FFmpeg exited with code ${code}`));
+        });
+      });
 
       if (!fs.existsSync(outputFile)) {
         return new Response("FFmpeg failed to produce output", { status: 500 });
