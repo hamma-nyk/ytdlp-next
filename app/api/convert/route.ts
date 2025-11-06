@@ -74,11 +74,14 @@ export async function GET(req: NextRequest) {
 
     const outputExt = audioOnly ? "mp3" : "mp4";
 
-    const outputFile = path.join(
-      process.cwd(),
-      "public",
-      `${crypto.randomUUID()}.${outputExt}`
-    );
+    // const outputFile = path.join(
+    //   process.cwd(),
+    //   "public",
+    //   `${crypto.randomUUID()}.${outputExt}`
+    // );
+
+    const fileId = crypto.randomUUID();
+    const outputFile = path.join("/tmp", `${fileId}.${outputExt}`);
 
     if (audioOnly) {
       ffmpegArgs.push("-acodec", "libmp3lame", "-f", "mp3", outputFile);

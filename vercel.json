@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "app/api/convert.ts", "use": "@vercel/node" },
+    { "src": "app/api/info.py", "use": "@vercel/python" },
+    { "src": "next.config.js", "use": "@vercel/next" }
+  ],
+  "routes": [
+    { "src": "/api/convert", "dest": "app/api/convert.ts" },
+    { "src": "/api/info", "dest": "app/api/info.py" },
+    { "src": "/(.*)", "dest": "/" }
+  ]
+}

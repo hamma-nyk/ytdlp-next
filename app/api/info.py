@@ -1,12 +1,18 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
 import yt_dlp
-
+import yt_dlp
+from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 app = FastAPI(docs_url=None, redoc_url=None)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return PlainTextResponse(str(exc), status_code=status.HTTP_400_BAD_REQUEST)
 @app.get("/api/info")
 async def get_info(url: str, format: str):
     if format == "audio":
