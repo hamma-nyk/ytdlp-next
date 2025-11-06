@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { execa } from "execa";
 import path from "path";
 import queryString from "query-string";
+import ffmpegPath from "ffmpeg-static";
 import fetch from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
@@ -102,14 +103,15 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const projectRoot = process.cwd();
-    const ffmpegPath = path.resolve(
-      projectRoot,
-      "node_modules/ffmpeg-static/ffmpeg.exe"
-    );
+    // local
+    // const projectRoot = process.cwd();
+    // const ffmpegPath = path.resolve(
+    //   projectRoot,
+    //   "node_modules/ffmpeg-static/ffmpeg.exe"
+    // );
 
     try {
-      const ff = execa(ffmpegPath, ffmpegArgs, {
+      const ff = execa(ffmpegPath!, ffmpegArgs, {
         stdout: "pipe",
         stderr: "pipe",
         shell: false,
