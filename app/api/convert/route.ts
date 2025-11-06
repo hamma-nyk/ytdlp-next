@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { execa } from "execa";
 import path from "path";
 import queryString from "query-string";
-import ffmpegPath from "ffmpeg-static";
+import pathToFfmpeg from "ffmpeg-static";
 import fetch from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
@@ -109,6 +109,7 @@ export async function GET(req: NextRequest) {
     //   projectRoot,
     //   "node_modules/ffmpeg-static/ffmpeg.exe"
     // );
+    const ffmpegPath = pathToFfmpeg;
 
     try {
       const ff = execa(ffmpegPath!, ffmpegArgs, {
