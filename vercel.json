@@ -3,7 +3,7 @@
   "builds": [
     { "src": "app/api/**/*.ts", "use": "@vercel/node" },
     { "src": "app/api/**/*.py", "use": "@vercel/python" },
-    { "src": "next.config.ts", "use": "@vercel/next" }
+    { "src": "package.json", "use": "@vercel/next" }
   ],
   "routes": [
     { "src": "/api/convert(.*)", "dest": "/app/api/convert/route.ts" },
