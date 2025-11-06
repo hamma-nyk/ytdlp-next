@@ -2,10 +2,11 @@ import { NextRequest } from "next/server";
 import { execa } from "execa";
 import path from "path";
 import queryString from "query-string";
-import pathToFfmpeg from "ffmpeg-static";
+// import pathToFfmpeg from "ffmpeg-static";
 import fetch from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 
 export const runtime = "nodejs"; // Penting: agar pakai Node.js runtime, bukan Edge
 
@@ -111,7 +112,7 @@ export async function GET(req: NextRequest) {
     // );
 
     try {
-      const ff = execa(pathToFfmpeg!, ffmpegArgs, {
+      const ff = execa(ffmpegInstaller.path, ffmpegArgs, {
         stdout: "pipe",
         stderr: "pipe",
         shell: false,
