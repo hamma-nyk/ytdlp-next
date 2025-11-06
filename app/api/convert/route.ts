@@ -110,9 +110,9 @@ export async function GET(req: NextRequest) {
     //   projectRoot,
     //   "node_modules/ffmpeg-static/ffmpeg.exe"
     // );
-
+    const ffmpegPath = "node_modules\\ffmpeg-static\\ffmpeg.exe";
     try {
-      const ff = execa(pathToFfmpeg!, ffmpegArgs, {
+      const ff = execa(ffmpegPath, ffmpegArgs, {
         stdout: "pipe",
         stderr: "pipe",
         // shell: false,
