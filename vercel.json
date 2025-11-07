@@ -6,7 +6,8 @@
   ],
   "routes": [
     { "src": "/api/convert(.*)", "dest": "/app/api/convert/route.ts" },
-    { "src": "/api/info", "dest": "/app/api/info.py" },
+    { "src": "/api/ainfo", "dest": "/app/api/info.py" },
+    { "src": "/api/vinfo", "dest": "/app/api/info.py" },
     { "src": "/(.*)", "dest": "/" }
   ]
 }

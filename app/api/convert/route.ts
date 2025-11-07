@@ -1,9 +1,8 @@
 import { NextRequest } from "next/server";
 import { spawn } from "child_process";
-import { execa } from "execa";
 import path from "path";
 import queryString from "query-string";
-import fetch from "node-fetch";
+// import nodeFetch, { Response as NodeFetchResponse } from "node-fetch";
 import fs from "fs";
 import crypto from "crypto";
 
@@ -21,6 +20,9 @@ interface YoutubeInfo {
   requested_formats?: YoutubeFormat[];
   title?: string;
   url?: string;
+  filesize?: number;
+  bytes?: number;
+  duration?: number;
 }
 
 // === API Handler ===
@@ -35,13 +37,27 @@ export async function GET(req: NextRequest) {
 
   try {
     const PY_API = process.env.PY_API || "http://127.0.0.1:8000";
+    let infoRes: Response;
 
-    const infoRes = await fetch(
-      `${PY_API}/api/info?${queryString.stringify({
-        url: url,
-        format: format,
-      })}`
-    );
+    if (format === "mp4") {
+      infoRes = await fetch(
+        `${PY_API}/api/vinfo?${queryString.stringify({
+          url: url,
+        })}`
+      );
+    } else if (format === "mp3") {
+      infoRes = await fetch(
+        `${PY_API}/api/ainfo?${queryString.stringify({
+          url: url,
+        })}`
+      );
+    } else {
+      infoRes = await fetch(
+        `${PY_API}/api/ainfo?${queryString.stringify({
+          url: url,
+        })}`
+      );
+    }
 
     if (!infoRes.ok) {
       const text = await infoRes.text();
