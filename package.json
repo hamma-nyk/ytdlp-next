@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "py": "uvicorn app.api.info:app --host 127.0.0.1 --port 8000 --reload",
+    "dev:all": "concurrently \"npm run py\" \"npm run dev\""
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

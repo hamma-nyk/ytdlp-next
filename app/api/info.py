@@ -1,5 +1,4 @@
 import yt_dlp
-import yt_dlp
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.exceptions import RequestValidationError
@@ -21,7 +20,8 @@ async def get_info(url: str, format: str):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     COOKIE_SRC = os.path.join(BASE_DIR, "cookies.txt")
     TMP_COOKIE = "/tmp/cookies.txt"
-    
+    # TMP_COOKIE = "cookies.txt"
+
     if os.path.exists(COOKIE_SRC):
         shutil.copy(COOKIE_SRC, TMP_COOKIE)
     else:
@@ -31,7 +31,7 @@ async def get_info(url: str, format: str):
         yt_dlp_formats = "bestaudio/best"
         print(yt_dlp_formats)
     elif format == "video":
-        yt_dlp_formats = "bestvideo+bestaudio/best"
+        yt_dlp_formats = "bestvideo[height<=480]+bestaudio/best"
         print(yt_dlp_formats)
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid format")

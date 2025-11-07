@@ -56,12 +56,11 @@ export async function GET(req: NextRequest) {
 
     const hasAudio = info.acodec && info.acodec !== "none";
     const hasVideo = info.vcodec && info.vcodec !== "none";
+    const audioOnly = hasAudio && !hasVideo;
 
     if (!hasAudio && hasVideo) {
       return new Response("only video, no audio", { status: 400 });
     }
-
-    const audioOnly = hasAudio && !hasVideo;
 
     const mainUrl =
       info.url ||
@@ -72,8 +71,8 @@ export async function GET(req: NextRequest) {
       return new Response("No valid stream URL found", { status: 400 });
     }
 
-    const ffmpegArgs: string[] = ["-i", mainUrl];
-
+    // === Gabungkan video dan audio stream ===
+    let ffmpegArgs: string[] = [];
     const outputExt = audioOnly ? "mp3" : "mp4";
 
     // const outputFile = path.join(
@@ -86,22 +85,68 @@ export async function GET(req: NextRequest) {
     const outputFile = path.join("/tmp", `${fileId}.${outputExt}`);
 
     if (audioOnly) {
-      ffmpegArgs.push("-acodec", "libmp3lame", "-f", "mp3", outputFile);
-    } else {
-      if (info.requested_formats && info.requested_formats[1]) {
-        ffmpegArgs.push("-i", info.requested_formats[1].url);
-      }
-      ffmpegArgs.push(
-        "-c:v",
-        "libx264",
+      ffmpegArgs = [
+        "-i",
+        mainUrl,
         "-acodec",
-        "aac",
-        "-movflags",
-        "frag_keyframe+empty_moov",
+        "libmp3lame",
         "-f",
-        "mp4",
-        outputFile
-      );
+        "mp3",
+        outputFile,
+      ];
+    } else {
+      let videoUrl: string | undefined;
+      let audioUrl: string | undefined;
+
+      if (
+        Array.isArray(info.requested_formats) &&
+        info.requested_formats.length >= 2
+      ) {
+        const videoCandidate = info.requested_formats.find(
+          (f: any) => f.vcodec && f.vcodec !== "none"
+        );
+        const audioCandidate = info.requested_formats.find(
+          (f: any) => f.acodec && f.acodec !== "none"
+        );
+
+        // Fallback kalau codec tidak ada
+        videoUrl = videoCandidate?.url || info.requested_formats[0]?.url;
+        audioUrl = audioCandidate?.url || info.requested_formats[1]?.url;
+      }
+
+      if (videoUrl && audioUrl && videoUrl !== audioUrl) {
+        // Jika audio & video terpisah → gabungkan
+        ffmpegArgs = [
+          "-i",
+          videoUrl,
+          "-i",
+          audioUrl,
+          "-c:v",
+          "libx264",
+          "-acodec",
+          "aac",
+          "-movflags",
+          "frag_keyframe+empty_moov",
+          "-f",
+          "mp4",
+          outputFile,
+        ];
+      } else {
+        // Jika hanya satu URL (gabung langsung)
+        ffmpegArgs = [
+          "-i",
+          mainUrl,
+          "-c:v",
+          "libx264",
+          "-acodec",
+          "aac",
+          "-movflags",
+          "frag_keyframe+empty_moov",
+          "-f",
+          "mp4",
+          outputFile,
+        ];
+      }
     }
 
     // local
@@ -110,18 +155,13 @@ export async function GET(req: NextRequest) {
     //   projectRoot,
     //   "node_modules/ffmpeg-static/ffmpeg.exe"
     // );
-
     // const ffmpegPath = ".\\node_modules\\ffmpeg-static\\ffmpeg";
+
     try {
       const ff = spawn("./node_modules/ffmpeg-static/ffmpeg", ffmpegArgs, {
         stdio: "pipe",
       });
-      //   const ff = execa(ffmpegPath, ffmpegArgs, {
-      //     stdout: "pipe",
-      //     stderr: "pipe",
-      //     // shell: false,
-      //     // windowsHide: true,
-      //   });
+      console.log(ffmpegArgs);
       await new Promise<void>((resolve, reject) => {
         ff.on("close", (code) => {
           if (code === 0) resolve();
